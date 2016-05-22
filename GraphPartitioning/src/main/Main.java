@@ -9,6 +9,7 @@ import io.GraphFormatReader;
 import io.PartitionWriter;
 import structs.AdjacencyListGraph;
 
+@SuppressWarnings("unused")
 public class Main {
 
 	public static int K = 13;
