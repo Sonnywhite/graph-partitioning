@@ -6,12 +6,13 @@ import main.GraphType;
 
 public interface Graph {
 	
-	public boolean addVertice(int verticeName);
-	public boolean addEdge(int verticeName1, int verticeName2);
+	public void addVertice(Integer verticeName);
+	public boolean addEdge(Integer verticeName1, Integer verticeName2);
 	public List<Vertice> getAllVertices();
 	public GraphType getGraphType();
 	public void setGraphType(GraphType graphType);
 	public int getVerticesCount();
 	public int getEdgesCount();
+	public int getCutEdgesCount();
 
 }

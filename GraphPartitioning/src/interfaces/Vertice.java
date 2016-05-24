@@ -9,5 +9,6 @@ public interface Vertice {
 	public int getPartitionAssignment();
 	public void setPartitionAssignment(int i);
 	public List<Integer> getNeighbourIDs();
+	public boolean addEdge(Vertice vertice);
 
 }

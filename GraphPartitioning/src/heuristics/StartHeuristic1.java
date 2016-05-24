@@ -35,7 +35,6 @@ public class StartHeuristic1 implements Heuristic {
 			tmp++;
 		}
 
-		System.out.println("INFO: StartHeuristic1 successfully applied!");
 		return;
 	}
 

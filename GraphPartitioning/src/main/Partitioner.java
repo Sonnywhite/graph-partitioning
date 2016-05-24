@@ -1,11 +1,11 @@
 package main;
 
 import interfaces.Heuristic;
-import structs.AdjacencyListGraph;
+import structs.HashMapGraph;
 
 public class Partitioner {
 
-	public void partGraph(Heuristic heuristic, AdjacencyListGraph graph, int k) {
+	public void partGraph(Heuristic heuristic, HashMapGraph graph, int k) {
 		
 		heuristic.applyHeuristic(graph, k);
 		

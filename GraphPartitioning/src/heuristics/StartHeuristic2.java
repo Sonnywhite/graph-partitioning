@@ -24,8 +24,8 @@ import main.VertriceDegreeComparator;
  * the main problem will be the partition connectivity,
  * on the one hand to hold the information and on the other to update it
  * 
- * so whenever we assign a partition to a vertice,
- * we need to update the connectivity for its neighbours
+ * solution: whenever we assign a partition to a vertice,
+ * we update the connectivity for its neighbours
  */
 
 public class StartHeuristic2 implements Heuristic {
@@ -133,7 +133,6 @@ public class StartHeuristic2 implements Heuristic {
 				// firstVerticeWithoutPartAssign.getVerticeID());
 
 				updateAssignmentAndConnectivities(firstVerticeWithoutPartAssign, currentPartition);
-
 			}
 
 			currentPartition++;
@@ -141,8 +140,7 @@ public class StartHeuristic2 implements Heuristic {
 
 		// DEBUG
 		// printPartitionConnectivity();
-
-		System.out.println("INFO: StartHeuristic2 successfully applied!");
+		
 		return;
 	}
 

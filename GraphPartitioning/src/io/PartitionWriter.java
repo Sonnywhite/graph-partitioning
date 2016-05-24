@@ -1,9 +1,6 @@
 package io;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.FileWriter;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,24 +16,20 @@ import main.VerticeNameComparator;
 
 public class PartitionWriter {
 
-	public boolean write(Graph graph, String outputfilepath) {
-		StringBuilder sb = new StringBuilder();
+	public boolean write(Graph graph, String outputfilepath, ConsoleLogger logger) {
 
 		List<Vertice> vertices = graph.getAllVertices();
 		Collections.sort(vertices, new VerticeNameComparator());
-		
-		for(Vertice vertice : vertices) {
-			sb.append(vertice.getPartitionAssignment()).append("\n");
-		}
-		
-		try (Writer writer = new BufferedWriter(
-				new OutputStreamWriter(new FileOutputStream(outputfilepath), "utf-8"))) {
-			writer.write(sb.toString());
-			
-			System.out.println("INFO: writing successfully complete to file: "+outputfilepath);
+
+		try (FileWriter writer = new FileWriter(outputfilepath)) {
+			for (Vertice vertice : vertices) {
+				writer.write(vertice.getPartitionAssignment() + "\n");
+			}
+			writer.flush();
+
+			logger.logOptional("writing successfully complete to file: " + outputfilepath);
 			return true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
