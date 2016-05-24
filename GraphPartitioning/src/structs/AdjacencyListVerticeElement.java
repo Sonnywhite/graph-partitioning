@@ -8,7 +8,7 @@ import interfaces.Vertice;
 public class AdjacencyListVerticeElement implements Vertice {
 
 	private int verticeID = -1;
-	private int verticeDegree = -1;
+	private int verticeDegree = 0;
 	private int partitionAssignment = -1;
 
 	private AdjacencyListVerticeElement next = null;
@@ -81,11 +81,11 @@ public class AdjacencyListVerticeElement implements Vertice {
 		this.tailEdge = tailEdge;
 	}
 
-	public boolean addEdge(int verticeID) {
+	public boolean addEdge(Vertice vertice) {
 
 		// TODO test if edge is already added
 
-		AdjacencyListEdgeElement newEdge = new AdjacencyListEdgeElement(verticeID);
+		AdjacencyListEdgeElement newEdge = new AdjacencyListEdgeElement(vertice);
 
 		if (rootEdge == null) {
 			rootEdge = newEdge;
@@ -144,6 +144,35 @@ public class AdjacencyListVerticeElement implements Vertice {
 	 */
 	public void setPartitionAssignment(int partitionAssignment) {
 		this.partitionAssignment = partitionAssignment;
+
+		// update edges
+		AdjacencyListEdgeElement currentEdge = rootEdge;
+		while (currentEdge != null) {
+			
+			int neighbourPartitionAssignment = currentEdge.getVertice().getPartitionAssignment();
+			
+			if (neighbourPartitionAssignment >= 0 && neighbourPartitionAssignment != partitionAssignment) {
+
+				// edge is now a cut-edge, because:
+				// adjacency vertice has a partition assignment
+				// + assignment is another one than the assignment of this
+				// vertice
+				currentEdge.setIsCutEdge(true);
+				HashMapGraph.CUT_EDGES_COUNT++;
+
+			} else if (neighbourPartitionAssignment == partitionAssignment && currentEdge.isCutEdge()) {
+
+				// is no longer a cut-edge, because:
+				// adjaceny vertice is in the same partition as this vertice
+				// + current edge was a cut-edge
+				currentEdge.setIsCutEdge(false);
+				HashMapGraph.CUT_EDGES_COUNT--;
+				
+			}
+			
+			// iterator
+			currentEdge = currentEdge.getNext();
+		}
 	}
 
 	@Override

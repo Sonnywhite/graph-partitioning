@@ -51,7 +51,7 @@ import main.GraphType;
 
 public class GraphFormatReader {
 
-	public Graph read(InputStream inputStream, Graph graph) throws Exception {
+	public Graph read(InputStream inputStream, Graph graph, ConsoleLogger logger) throws Exception {
 
 		// try read file
 		// Path path = Paths.get(filepath);
@@ -75,19 +75,19 @@ public class GraphFormatReader {
 				// check first line again (in case we have skipped comment
 				// lines)
 				if (line == null) {
-					System.out.println("ERROR: first line was empty");
+					logger.logError("first line was empty");
 					return null;
 				}
 
 				splittedLine = line.trim().split(" +");
 
 				if (splittedLine.length < 2) {
-					System.out.println("ERROR: parameter line has not enough values (" + splittedLine.length
+					logger.logError("parameter line has not enough values (" + splittedLine.length
 							+ " given, min. 2 are required)");
 					return null;
 				}
 				if (splittedLine.length > 4) {
-					System.out.println("ERROR: parameter line has too many values (" + splittedLine.length
+					logger.logError("parameter line has too many values (" + splittedLine.length
 							+ " given, max. 4 are specified)");
 					return null;
 				}
@@ -104,7 +104,7 @@ public class GraphFormatReader {
 				}
 
 			} else {
-				System.out.println("ERROR: first line was empty");
+				logger.logError("first line was empty");
 				return null;
 			}
 
@@ -122,10 +122,10 @@ public class GraphFormatReader {
 				}
 
 				if (line == null && i < verticesCountFromFile) {
-					System.out.println("ERROR: (at line: " + (i + 1) + ")corrupted file... there should be more lines");
+					logger.logError("(at line: " + (i + 1) + ") corrupted file... there should be more lines");
 					return null;
 				} else if (line == null && i > verticesCountFromFile) {
-					System.out.println("ERROR: (at line: " + (i + 1) + ")corrupted file... there should be less lines");
+					logger.logError("(at line: " + (i + 1) + ") corrupted file... there should be less lines");
 					return null;
 				}
 				currentVerticeName = i;
@@ -142,14 +142,14 @@ public class GraphFormatReader {
 
 			// reading evaluation
 			if (graph.getVerticesCount() > 0) {
-				String readingEval = "INFO: reading evaluation: " + graph.getVerticesCount()
-						+ " vertices read (vertice count in file: " + verticesCountFromFile + "); "
-						+ graph.getEdgesCount() + " edges read (edge count in file: " + edgesCountFromFile + "); "
+				String readingEval = "reading evaluation: " + graph.getVerticesCount()
+						+ " vertices in graph (vertice count in file: " + verticesCountFromFile + "); "
+						+ graph.getEdgesCount() + " edges in graph (edge count in file: " + edgesCountFromFile + "); "
 						+ "GraphType: " + graph.getGraphType().toString() + "; lines read: " + lines;
-				System.out.println(readingEval);
+				logger.logOptional(readingEval);
 
 			} else {
-				System.out.println("WARN: no vertices been read");
+				logger.logError("no vertices been read");
 			}
 		}
 

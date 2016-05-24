@@ -1,12 +1,16 @@
 package structs;
 
-public class AdjacencyListEdgeElement {
+import interfaces.Edge;
+import interfaces.Vertice;
 
-	private int verticeID = -1;
+public class AdjacencyListEdgeElement implements Edge {
+
+	private Vertice vertice = null;
 	private AdjacencyListEdgeElement next = null;
+	private boolean cutEdge = false;
 
-	public AdjacencyListEdgeElement(int verticeID) {
-		this.setVerticeID(verticeID);
+	public AdjacencyListEdgeElement(Vertice vertice) {
+		this.vertice=vertice;
 	}
 
 	/**
@@ -28,15 +32,20 @@ public class AdjacencyListEdgeElement {
 	 * @return the verticeID
 	 */
 	public int getVerticeID() {
-		return verticeID;
+		return vertice.getVerticeID();
 	}
 
-	/**
-	 * @param verticeID
-	 *            the verticeID to set
-	 */
-	public void setVerticeID(int verticeID) {
-		this.verticeID = verticeID;
+	public void setIsCutEdge(boolean val) {
+		this.cutEdge=val;
+	}
+	
+	@Override
+	public boolean isCutEdge() {
+		return cutEdge;
+	}
+	
+	public Vertice getVertice() {
+		return vertice;
 	}
 
 }
