@@ -1,9 +1,7 @@
 package main;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -81,7 +79,6 @@ public class Experiments {
 		argz.add("-q");
 		for (File inputGraphFile : TEST_GRAPHS_DIR.listFiles(TEST_GRAPH_FILENAME_FILTER)) {
 
-			long start = System.currentTimeMillis();
 			// DEBUG System.out.println("argz-length="+argz.size());
 
 			// TODO ugly!
@@ -115,7 +112,8 @@ public class Experiments {
 				argz.remove("-k");
 				argz.remove("" + kArray[i]);
 
-				//double duration = (double) (System.currentTimeMillis() - start) / 1000;
+				// double duration = (double) (System.currentTimeMillis() -
+				// start) / 1000;
 
 				// BufferedReader reader = new BufferedReader(
 				// new FileReader());
