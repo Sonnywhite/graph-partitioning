@@ -49,9 +49,13 @@ import main.GraphType;
  * 
  */
 
-public class GraphFormatReader {
+public class GraphFormatReader extends ConsoleLogger {
 
-	public Graph read(InputStream inputStream, Graph graph, ConsoleLogger logger) throws Exception {
+	public GraphFormatReader() {
+		super(GraphFormatReader.class.getSimpleName());
+	}
+
+	public Graph read(InputStream inputStream, Graph graph) throws Exception {
 
 		// try read file
 		// Path path = Paths.get(filepath);
@@ -146,7 +150,7 @@ public class GraphFormatReader {
 						+ " vertices in graph (vertice count in file: " + verticesCountFromFile + "); "
 						+ graph.getEdgesCount() + " edges in graph (edge count in file: " + edgesCountFromFile + "); "
 						+ "GraphType: " + graph.getGraphType().toString() + "; lines read: " + lines;
-				logger.logOptional(readingEval);
+				logger.log(readingEval);
 
 			} else {
 				logger.logError("no vertices been read");

@@ -14,9 +14,13 @@ import main.VerticeNameComparator;
  * p-1, where p is the number of partitions.
  */
 
-public class PartitionWriter {
+public class PartitionWriter extends ConsoleLogger {
 
-	public boolean write(Graph graph, String outputfilepath, ConsoleLogger logger) {
+	public PartitionWriter() {
+		super(PartitionWriter.class.getSimpleName());
+	}
+
+	public boolean write(Graph graph, String outputfilepath) {
 
 		List<Vertice> vertices = graph.getAllVertices();
 		Collections.sort(vertices, new VerticeNameComparator());
@@ -27,7 +31,7 @@ public class PartitionWriter {
 			}
 			writer.flush();
 
-			logger.logOptional("writing successfully complete to file: " + outputfilepath);
+			logger.log("writing successfully complete to file: " + outputfilepath);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
