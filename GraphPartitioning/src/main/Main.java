@@ -28,6 +28,8 @@ public class Main {
 	public static String OUTPUT_FILE = "output.ptn";
 	public static Heuristic heuristic;
 	public static int K = 2;
+	public static boolean VERBOSE = false;
+	public static boolean QUIET = false;
 
 	public static Options OPTIONS = new Options();
 	public static String HELP_OPTION = "h";
@@ -68,10 +70,14 @@ public class Main {
 			}
 
 			// args evaluation
+			
+			// verbose & quiet
+			VERBOSE = cmd.hasOption(VERBOSE_OPTION);
+			QUIET = cmd.hasOption(QUIET_OPTION);
 
-			// verbose
-			ConsoleLogger logger = new ConsoleLogger(cmd.hasOption(VERBOSE_OPTION), cmd.hasOption(QUIET_OPTION));
-			logger.logOptional("starting graph-partitioning");
+			// set up the logger for Main
+			ConsoleLogger logger = new ConsoleLogger(Main.class.getSimpleName());
+			logger.log("starting graph-partitioning");
 
 			// heuristic
 			heuristic = new StartHeuristic1();
@@ -80,26 +86,26 @@ public class Main {
 			InputStream inputStream = null;
 			if (cmd.hasOption(INPUT_FILE_OPTION)) {
 				INPUT_FILE = cmd.getOptionValue(INPUT_FILE_OPTION);
-				logger.logOptional("using input_file=" + INPUT_FILE);
+				logger.log("using input_file=" + INPUT_FILE);
 				inputStream = new FileInputStream(INPUT_FILE);
 			} else {
-				logger.logOptional("no input_file specified, using: " + INPUT_FILE);
+				logger.log("no input_file specified, using: " + INPUT_FILE);
 				inputStream = Main.class.getResourceAsStream(INPUT_FILE);
 			}
 
 			// output_file
 			if (cmd.hasOption(OUTPUT_FILE_OPTION)) {
 				OUTPUT_FILE = cmd.getOptionValue(OUTPUT_FILE_OPTION);
-				logger.logOptional("using output_file=" + OUTPUT_FILE);
+				logger.log("using output_file=" + OUTPUT_FILE);
 			} else
-				logger.logOptional("no output_file specified, using: " + OUTPUT_FILE);
+				logger.log("no output_file specified, using: " + OUTPUT_FILE);
 
 			// k
 			if (cmd.hasOption(K_OPTION)) {
 				K = Integer.parseInt(cmd.getOptionValue(K_OPTION));
-				logger.logOptional("using k=" + K);
+				logger.log("using k=" + K);
 			} else
-				logger.logOptional("no K specified, using K=" + K);
+				logger.log("no K specified, using K=" + K);
 
 			// heuristic
 			if (cmd.hasOption(HEURISTIC_OPTION)) {
@@ -115,13 +121,13 @@ public class Main {
 			long tmpStartTime = System.currentTimeMillis();
 			HashMapGraph graph = new HashMapGraph(logger);
 			GraphFormatReader reader = new GraphFormatReader();
-			graph = (HashMapGraph) reader.read(inputStream, graph, logger);
+			graph = (HashMapGraph) reader.read(inputStream, graph);
 			double readingTime = (double) (System.currentTimeMillis() - tmpStartTime) / 1000;
 
 			// TEST:is k greater then vertice count?
 			if (K > graph.getVerticesCount()) {
 				logger.logError("the choosen K (" + K
-						+ ") is bigger then the vertice count, in that case graph partitioning wont work");
+						+ ") is bigger then the vertice count, in that case graph partitioning won't work");
 				logger.logError(
 						"terminated after " + (double) (System.currentTimeMillis() - overallStartTime) / 1000 + "s");
 				return;
@@ -136,13 +142,13 @@ public class Main {
 			// checking
 			tmpStartTime = System.currentTimeMillis();
 			Checker checker = new Checker();
-			CheckResult checkResult = checker.check(graph, K, logger);
+			CheckResult checkResult = checker.check(graph, K);
 			double checkingTime = (double) (System.currentTimeMillis() - tmpStartTime) / 1000;
 
 			// write result
 			tmpStartTime = System.currentTimeMillis();
 			PartitionWriter writer = new PartitionWriter();
-			writer.write(graph, OUTPUT_FILE, logger);
+			writer.write(graph, OUTPUT_FILE);
 			double writingTime = (double) (System.currentTimeMillis() - tmpStartTime) / 1000;
 
 			double overallTime = (double) (System.currentTimeMillis() - overallStartTime) / 1000;
@@ -157,11 +163,11 @@ public class Main {
 			logger.logFormat(leftAlignFormat, "writing", writingTime + "s");
 			logger.logFormat(leftAlignFormat, "overall", overallTime + "s");
 			logger.logFormat("+--------------+----------+%n");
-			
-			// experiments
+
+			// doc experiments
 			if (cmd.hasOption(EXPERIMENT_ID_OPTION) && checkResult != null) {
 				ExperimentWriter expWriter = new ExperimentWriter();
-				expWriter.write(cmd.getOptionValue(EXPERIMENT_ID_OPTION), checkResult, overallTime+"s");
+				expWriter.write(cmd.getOptionValue(EXPERIMENT_ID_OPTION), checkResult, overallTime + "s");
 			}
 
 		} catch (Exception e) {

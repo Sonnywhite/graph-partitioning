@@ -9,6 +9,7 @@ import java.util.Map;
 import interfaces.Graph;
 import interfaces.Heuristic;
 import interfaces.Vertice;
+import io.ConsoleLogger;
 import main.VertriceDegreeComparator;
 
 /*
@@ -28,7 +29,11 @@ import main.VertriceDegreeComparator;
  * we update the connectivity for its neighbours
  */
 
-public class StartHeuristic2 implements Heuristic {
+public class StartHeuristic2 extends ConsoleLogger implements Heuristic {
+
+	public StartHeuristic2() {
+		super(StartHeuristic2.class.getSimpleName());
+	}
 
 	/**
 	 * holds the partition connectivity information for every vertice<br>
@@ -60,11 +65,13 @@ public class StartHeuristic2 implements Heuristic {
 		// get vertices and sort them by degree
 		List<Vertice> vertices = graph.getAllVertices();
 		idToVertice = new HashMap<>();
-		for (Vertice vertice : vertices)
+		for (Vertice vertice : vertices) // complexity: irrelevant
 			idToVertice.put(vertice.getVerticeID(), vertice);
 		Collections.sort(vertices, new VertriceDegreeComparator());
 
-		// build up k partitions
+		int currVerticeCount = 0;
+		
+		// build up k partitions; complexity: O(k)
 		for (int i = 0; i < k; i++) {
 
 			// update partition connectivity for this vertice
@@ -74,18 +81,23 @@ public class StartHeuristic2 implements Heuristic {
 			// get neighbours & update partition connectivity
 			for (int j : vertices.get(i).getNeighbourIDs())
 				partitionConnectivity[j][i] = 1;
+			
+			currVerticeCount++;
+			logger.logProgress(currVerticeCount, graph.getVerticesCount());
 		}
 
 		// DEBUG
 		// printPartitionConnectivity();
 
-		// fill partitions equally
+		// fill partitions equally; 
+		// complexity: O(|V|-k) * O(|V|) 
 		int currentPartition = 0;
 		for (int i = k; i < vertices.size(); i++) {
 			if (currentPartition == k)
 				currentPartition = 0;
 
 			// determine best vertice to add
+			// complexity: O(|V|)
 			int maxConnectivity = -1;
 			int maxConnVerticeID = -1;
 			Vertice firstVerticeWithoutPartAssign = null;
@@ -119,32 +131,30 @@ public class StartHeuristic2 implements Heuristic {
 
 				// found the best vertice to add to this partition
 				Vertice bestVerticeToAdd = idToVertice.get(maxConnVerticeID);
-				updateAssignmentAndConnectivities(bestVerticeToAdd, currentPartition);
+				addVerticeToPartitionAndUpdateConnectivity(bestVerticeToAdd, currentPartition);
 
 			} else {
 
 				// didnt found any vertice to add
 				// -> add previously found first Vertice without an assignment
-
-				// DEBUG
-				// System.out.println("DEBUG: Found no vertice to add for
-				// partition " + currentPartition
-				// + "; adding vertice " +
-				// firstVerticeWithoutPartAssign.getVerticeID());
-
-				updateAssignmentAndConnectivities(firstVerticeWithoutPartAssign, currentPartition);
+				addVerticeToPartitionAndUpdateConnectivity(firstVerticeWithoutPartAssign, currentPartition);
 			}
 
 			currentPartition++;
+			
+			currVerticeCount++;
+			logger.logProgress(currVerticeCount,graph.getVerticesCount());
 		}
 
 		// DEBUG
 		// printPartitionConnectivity();
-		
+
+		//logger.log(StartHeuristic2.class.getSimpleName() + " applied!");
 		return;
 	}
 
-	private void updateAssignmentAndConnectivities(Vertice vertice, int currentPartition) {
+	// complexity: O(|V|)
+	private void addVerticeToPartitionAndUpdateConnectivity(Vertice vertice, int currentPartition) {
 		vertice.setPartitionAssignment(currentPartition);
 		partitionConnectivity[vertice.getVerticeID()][currentPartition] = 0;
 

@@ -6,13 +6,17 @@ import interfaces.Graph;
 import interfaces.Vertice;
 import io.ConsoleLogger;
 
-public class Checker {
-	
+public class Checker extends ConsoleLogger {
+
+	public Checker() {
+		super(Checker.class.getSimpleName());
+	}
+
 	public class CheckResult {
-		private int cutWeight=-1;
-		private int largestSubDomain=-1;
+		private int cutWeight = -1;
+		private int largestSubDomain = -1;
 		private String usedHeuristic = "noone";
-		
+
 		public CheckResult(int cutWeight, int largestSubDomain, String usedHeuristic) {
 			setCutWeight(cutWeight);
 			setLargestSubDomain(largestSubDomain);
@@ -42,16 +46,17 @@ public class Checker {
 		public void setUsedHeuristic(String usedHeuristic) {
 			this.usedHeuristic = usedHeuristic;
 		}
-		
+
 		@Override
 		public String toString() {
-			//return getCutWeight()+" ("+getLargestSubDomain()+") ["+getUsedHeuristic()+"]";
-			return getCutWeight()+" ["+getUsedHeuristic()+"]";
+			// return getCutWeight()+" ("+getLargestSubDomain()+")
+			// ["+getUsedHeuristic()+"]";
+			return getCutWeight() + " [" + getUsedHeuristic() + "]";
 		}
-		
+
 	}
 
-	public CheckResult check(Graph graph, int k, ConsoleLogger logger) {
+	public CheckResult check(Graph graph, int k) {
 
 		// since every vertice can only have one partition assignment, we dont
 		// have to check if one vertice is assigned to more then one partition
@@ -71,10 +76,12 @@ public class Checker {
 			}
 		}
 
-		logger.logOptional("solution is valid!");
-		CheckResult checkResult = new CheckResult(graph.getCutEdgesCount(), 666, Main.heuristic.getClass().getSimpleName());
-		logger.logOptional(checkResult.toString());
-		logger.logOptional("cut-weight (#cut-edges) (weight of largest subdomain) [heuristic used]");
+		logger.log("solution is valid!");
+		CheckResult checkResult = new CheckResult(graph.getCutEdgesCount(), 666,
+				Main.heuristic.getClass().getSimpleName());
+		logger.log(checkResult.toString());
+		logger.log("cut-weight (#cut-edges) (weight of largest subdomain) [heuristic used]");
+
 		// logger.logOptional("subdomain vertice counts ("+k+" subdomains from 0
 		// to "+(k-1)+") = "+Arrays.toString(kBuckets));
 
