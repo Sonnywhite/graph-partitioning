@@ -3,9 +3,12 @@ package structs;
 import io.ConsoleLogger;
 import main.GraphType;
 
-public class AbstractGraph {
+public class AbstractGraph extends ConsoleLogger {
 	
-	protected ConsoleLogger logger;
+	public AbstractGraph(String className) {
+		super(className);
+	}
+
 	private GraphType graphType = GraphType.SIMPLE;
 	
 	public GraphType getGraphType() {

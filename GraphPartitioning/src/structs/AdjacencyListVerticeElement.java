@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import interfaces.Vertice;
+import main.Main;
 
 public class AdjacencyListVerticeElement implements Vertice {
 
 	private int verticeID = -1;
 	private int verticeDegree = 0;
-	private int partitionAssignment = -1;
+	private int partitionAssignment = Main.NO_PARTITION_ASSIGNMENT;
 
 	private AdjacencyListVerticeElement next = null;
 	private AdjacencyListVerticeElement pre = null;
@@ -183,6 +184,19 @@ public class AdjacencyListVerticeElement implements Vertice {
 		AdjacencyListEdgeElement currentEdge = rootEdge;
 		while (currentEdge != null) {
 			neighbourIDs.add(currentEdge.getVerticeID());
+			currentEdge = currentEdge.getNext();
+		}
+
+		return neighbourIDs;
+	}
+
+	@Override
+	public List<Vertice> getNeighbours() {
+		List<Vertice> neighbourIDs = new ArrayList<>();
+
+		AdjacencyListEdgeElement currentEdge = rootEdge;
+		while (currentEdge != null) {
+			neighbourIDs.add(currentEdge.getVertice());
 			currentEdge = currentEdge.getNext();
 		}
 
