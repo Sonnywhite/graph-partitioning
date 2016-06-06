@@ -81,7 +81,7 @@ public class Checker extends ConsoleLogger {
 			}
 		}
 		
-		// check partition min size
+		// TODO check partition min size
 
 		logger.log("solution is valid!");
 		CheckResult checkResult = new CheckResult(graph.getCutEdgesCount(), 666,
