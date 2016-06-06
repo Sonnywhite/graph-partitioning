@@ -12,6 +12,7 @@ import org.apache.commons.cli.Options;
 
 import heuristics.StartHeuristic1;
 import heuristics.StartHeuristic2;
+import interfaces.Graph;
 import interfaces.Heuristic;
 import io.ConsoleLogger;
 import io.ExperimentWriter;
@@ -30,6 +31,9 @@ public class Main {
 	public static int K = 2;
 	public static boolean VERBOSE = false;
 	public static boolean QUIET = false;
+	
+	// properties
+	public static int NO_PARTITION_ASSIGNMENT = -1;
 
 	public static Options OPTIONS = new Options();
 	public static String HELP_OPTION = "h";
@@ -119,9 +123,9 @@ public class Main {
 			}
 
 			long tmpStartTime = System.currentTimeMillis();
-			HashMapGraph graph = new HashMapGraph(logger);
+			Graph graph = new HashMapGraph();
 			GraphFormatReader reader = new GraphFormatReader();
-			graph = (HashMapGraph) reader.read(inputStream, graph);
+			graph = reader.read(inputStream, graph);
 			double readingTime = (double) (System.currentTimeMillis() - tmpStartTime) / 1000;
 
 			// TEST:is k greater then vertice count?

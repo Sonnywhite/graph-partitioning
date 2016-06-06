@@ -11,6 +11,7 @@ import interfaces.Heuristic;
 import interfaces.Vertice;
 import io.ConsoleLogger;
 import main.VertriceDegreeComparator;
+import structs.HashMapGraph;
 
 /*
  * Second Heuristic
@@ -67,7 +68,9 @@ public class StartHeuristic2 extends ConsoleLogger implements Heuristic {
 		idToVertice = new HashMap<>();
 		for (Vertice vertice : vertices) // complexity: irrelevant
 			idToVertice.put(vertice.getVerticeID(), vertice);
+		long sortStart = System.currentTimeMillis();
 		Collections.sort(vertices, new VertriceDegreeComparator());
+		logger.log("sorting finished after: "+((double) (System.currentTimeMillis() - sortStart) / 1000));
 
 		int currVerticeCount = 0;
 		
@@ -179,6 +182,11 @@ public class StartHeuristic2 extends ConsoleLogger implements Heuristic {
 		for (int i = 0; i < partitionConnectivity.length; i++)
 			System.out.print(Arrays.toString(partitionConnectivity[i]));
 		System.out.print("\n");
+	}
+
+	@Override
+	public Graph getGraphInstance() {
+		return new HashMapGraph();
 	}
 
 }

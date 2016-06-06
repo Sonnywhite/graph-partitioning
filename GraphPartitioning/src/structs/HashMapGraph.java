@@ -7,7 +7,6 @@ import java.util.Map;
 
 import interfaces.Graph;
 import interfaces.Vertice;
-import io.ConsoleLogger;
 import main.GraphType;
 
 public class HashMapGraph extends AbstractGraph implements Graph {
@@ -16,9 +15,9 @@ public class HashMapGraph extends AbstractGraph implements Graph {
 	
 	private Map<Integer, Vertice> verticeMap = new HashMap<>();
 
-	public HashMapGraph(ConsoleLogger logger) {
+	public HashMapGraph() {
+		super(HashMapGraph.class.getSimpleName());
 		CUT_EDGES_COUNT = 0;
-		this.logger = logger;
 	}
 	
 	/**
