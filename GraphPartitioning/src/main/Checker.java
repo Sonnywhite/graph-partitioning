@@ -67,20 +67,27 @@ public class Checker extends ConsoleLogger {
 		int[] kBuckets = new int[k];
 		Arrays.fill(kBuckets, 0);
 		for (Vertice vertice : graph.getAllVertices()) {
-			if (vertice.getPartitionAssignment() >= 0)
+			if (vertice.getPartitionAssignment() >= 0) {
+				if (kBuckets[vertice.getPartitionAssignment()]==Main.PARTITION_SIZE_MAX) {
+					logError("solution is not valid (PARTITION_SIZE_MAX exceeded)");
+					return null;
+				}
 				kBuckets[vertice.getPartitionAssignment()]++;
+			}
 			else {
 				logger.logError(
 						"solution is not valid (vertice " + vertice.getVerticeID() + " has no partition assignment)");
 				return null;
 			}
 		}
+		
+		// check partition min size
 
 		logger.log("solution is valid!");
 		CheckResult checkResult = new CheckResult(graph.getCutEdgesCount(), 666,
-				Main.heuristic.getClass().getSimpleName());
+				Main.HEURISTIC.getClass().getSimpleName());
 		logger.log(checkResult.toString());
-		logger.log("cut-weight (#cut-edges) (weight of largest subdomain) [heuristic used]");
+		//logger.log("cut-weight (#cut-edges) (weight of largest subdomain) [heuristic used]");
 
 		// logger.logOptional("subdomain vertice counts ("+k+" subdomains from 0
 		// to "+(k-1)+") = "+Arrays.toString(kBuckets));
