@@ -27,10 +27,13 @@ public class Main {
 	public static String INPUT_FILE = "/test.graph";
 	// public static String INPUT_FILE = "/tinytest.graph";
 	public static String OUTPUT_FILE = "output.ptn";
-	public static Heuristic heuristic;
+	public static Heuristic HEURISTIC;
 	public static int K = 2;
 	public static boolean VERBOSE = false;
 	public static boolean QUIET = false;
+	public static int IMBALANCE = 0;
+	public static int PARTITION_SIZE_MAX;
+	public static int PARTITION_SIZE_MIN;
 	
 	// properties
 	public static int NO_PARTITION_ASSIGNMENT = -1;
@@ -44,6 +47,7 @@ public class Main {
 	public static String QUIET_OPTION = "q";
 	public static String EXPERIMENT_ID_OPTION = "e";
 	public static String HEURISTIC_OPTION = "heu";
+	public static String IMBALANCE_OPTION = "b";
 
 	private static void generateOptions() {
 		OPTIONS.addOption(HELP_OPTION, "help", false, "print this message");
@@ -55,6 +59,7 @@ public class Main {
 		OPTIONS.addOption(QUIET_OPTION, "quiet", false, "be extra quiet");
 		OPTIONS.addOption(EXPERIMENT_ID_OPTION, true, "has to be a unique id; saves experiment results with that id");
 		OPTIONS.addOption(HEURISTIC_OPTION, "heuristic", true, "classname of the heuristic that should be used");
+		OPTIONS.addOption(IMBALANCE_OPTION, "imba", true, "positive imbalance in percent (1 == 1% imbalance)");
 	}
 
 	public static void main(String[] args) {
@@ -74,7 +79,7 @@ public class Main {
 			}
 
 			// args evaluation
-			
+
 			// verbose & quiet
 			VERBOSE = cmd.hasOption(VERBOSE_OPTION);
 			QUIET = cmd.hasOption(QUIET_OPTION);
@@ -84,7 +89,7 @@ public class Main {
 			logger.log("starting graph-partitioning");
 
 			// heuristic
-			heuristic = new StartHeuristic1();
+			HEURISTIC = new StartHeuristic1();
 
 			// input_file
 			InputStream inputStream = null;
@@ -113,7 +118,12 @@ public class Main {
 
 			// heuristic
 			if (cmd.hasOption(HEURISTIC_OPTION)) {
-				heuristic = (Heuristic) Class.forName(cmd.getOptionValue(HEURISTIC_OPTION)).newInstance();
+				HEURISTIC = (Heuristic) Class.forName(cmd.getOptionValue(HEURISTIC_OPTION)).newInstance();
+			}
+
+			// imbalance
+			if (cmd.hasOption(IMBALANCE_OPTION)) {
+				IMBALANCE = Integer.parseInt(cmd.getOptionValue(IMBALANCE_OPTION));
 			}
 
 			// TEST: input_ and output_file specified?
@@ -122,6 +132,14 @@ public class Main {
 				return;
 			}
 
+			// TEST: imbalance positive?
+			if (IMBALANCE < 0) {
+				logger.logError("imbalance has to be a positive integer; imbalance=" + IMBALANCE);
+			}
+
+			// processing
+
+			// build up graph
 			long tmpStartTime = System.currentTimeMillis();
 			Graph graph = new HashMapGraph();
 			GraphFormatReader reader = new GraphFormatReader();
@@ -136,11 +154,17 @@ public class Main {
 						"terminated after " + (double) (System.currentTimeMillis() - overallStartTime) / 1000 + "s");
 				return;
 			}
-
+			
+			// partition min and max
+			PARTITION_SIZE_MAX = (int) (Math.ceil(graph.getVerticesCount()/K) * ((double) (100+IMBALANCE)/100));
+			PARTITION_SIZE_MIN = (int) (Math.ceil(graph.getVerticesCount()/K) * ((double) (100-IMBALANCE)/100));
+			logger.log("PARTITION_SIZE_MAX="+PARTITION_SIZE_MAX);
+			logger.log("PARTITION_SIZE_MIN="+PARTITION_SIZE_MIN);
+			
 			// partitioning
 			tmpStartTime = System.currentTimeMillis();
 			Partitioner partitioner = new Partitioner();
-			partitioner.partGraph(heuristic, graph, K);
+			partitioner.partGraph(HEURISTIC, graph, K);
 			double partitioningTime = (double) (System.currentTimeMillis() - tmpStartTime) / 1000;
 
 			// checking
